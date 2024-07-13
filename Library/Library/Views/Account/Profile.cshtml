@@ -1,0 +1,136 @@
+﻿@using Data.DTOs.UserDTO
+@using Syncfusion.EJ2
+@model UserDTO
+@{
+    ViewData["Title"] = "Profile";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<form action="/Account/UpdateProfile" method="post" enctype="multipart/form-data">
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <i id="edit" class="fas fa-edit"></i>
+            <div class="card-body border-bottom">
+                <div class="fro_profile">
+                    
+                    <div class="row">
+                        <div class="col-lg-6 mb-3 mb-lg-0">
+                            <div class="fro_profile-main">
+                                <div class="fro_profile-main-pic">
+                                    @if (Model.Image != null)
+                                        {
+                                            <img id="output" src="~/Images/Profile/@Model.Image" alt="" class="rounded-circle">
+                                        }
+                                        else
+                                        {
+                                            <img id="output" src="~/user.png" alt="" class="rounded-circle">
+                                        }
+                                        
+                                    <span id="camera" class="fro-profile_main-pic-change">
+                                        <i class="fas fa-camera"></i>
+                                    </span>
+
+                                        <input asp-for="file" id="picInput" type="file"  name="file" onchange="loadFile(event)" />
+                                </div>
+                                <div class="fro_profile_user-detail">
+                                    <h5 class="fro_user-name">@Model.FullName</h5>
+                                    <p class="mb-0 fro_user-name-post">@Model.Email</p>
+                                </div>
+                            </div>
+                        </div><!--end col-->
+
+
+                        <script>
+                            $(document).ready(function () {
+                                $('#camera').click(function () {
+                                    $('#picInput').click();
+                                });
+                            });
+
+                            var loadFile = function (event) {
+                                var reader = new FileReader();
+                                reader.onload = function () {
+                                    var output = document.getElementById('output');
+                                    output.src = reader.result;
+                                };
+                                reader.readAsDataURL(event.target.files[0]);
+                            };
+                        </script>
+                    </div><!--end row-->
+                </div><!--end f_profile-->
+            </div><!--end card-body-->
+
+
+        </div><!--end card-->
+    </div><!--end col-->
+</div><!--end row-->
+
+<div class="row">
+
+    <div class="col-12">
+
+        <div class="card">
+
+            
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="card-body border-bottom">
+                    <div class="fro_profile">
+                        <div class="row">
+                            <div class="col-lg-6 mb-3 mb-lg-0">
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">FullName</label>
+                                    <input asp-for="FullName" type="text" class="form-control inputEdit" id="FullName" value="@Model.FullName" aria-describedby="emailHelp" readonly>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6 mb-3 mb-lg-0">
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Email address</label>
+                                    <input asp-for="Email" type="email" class="form-control inputEdit" id="exampleInputEmail1" value="@Model.Email" aria-describedby="emailHelp" readonly>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 mb-3 mb-lg-0">
+                                <div class="form-group">
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">User Name</label>
+                                        <input asp-for="UserName" type="text" class="form-control" id="exampleInputEmail1" value="@Model.UserName" aria-describedby="emailHelp" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 mb-3 mb-lg-0 saveForm">
+                                <div class="float-right align-item-center mt-2">
+                                    <button type="submit" id="saveBtn" style="color:#ffffff; cursor:pointer" class="btn btn-info px-4 align-self-center report-btn" disabled>Save Changes</button>
+                                </div>
+                            </div>
+                        </div><!--end row-->
+                    </div><!--end f_profile-->
+                </div><!--end card-body-->
+            
+
+
+        </div><!--end card-->
+    </div><!--end col-->
+</div>
+</form>
+<script>
+    
+    $(document).on('click', '#edit', (function () {
+        $('.inputEdit').removeAttr('readonly');
+        $('#camera').css("display", "flex");
+        $('#saveBtn').removeAttr('disabled');
+    }));
+
+    var loadFile = function (event) {
+        var reader = new FileReader();
+        reader.onload = function () {
+            var output = document.getElementById('output');
+            output.src = reader.result;
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    };
+</script>
+
+
+

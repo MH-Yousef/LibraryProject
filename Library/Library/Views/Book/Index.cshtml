@@ -1,0 +1,376 @@
+﻿@using Data.DTOs.Book
+@using Data.DTOs.Category
+@using Newtonsoft.Json
+@using Syncfusion.EJ2
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var Categories = ViewBag.Categories;
+    var Sections = ViewBag.Sections;
+    var Shelves = ViewBag.Shelves;
+    var Books = ViewBag.Books;
+}
+@model BookDTO
+@if (Shelves == null || Sections == null || Categories == null)
+{
+    <div>
+        <label>Please Insert Complate</label>
+    </div>
+}
+else{
+    <button class="btn btn-primary" id="create" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Add Book</button>
+    <br>
+    <br>
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Book</h5>
+                    <button type="button" class="close btnClose" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="BookForm" enctype="multipart/form-data">
+                        <input type="text" id="Id" name="Id" hidden />
+                        <input type="text" id="CreatedAt" name="CreatedAt" hidden />
+                        <input type="text" id="UpdatedAt" name="UpdatedAt" hidden />
+                        <div class="form-group">
+                            <label for="Title">Book Title</label>
+                            <input type="text" class="form-control" name="Title" id="Title" placeholder="Enter Book Title">
+                            <div class="errorTxt text-danger"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="Author">Author</label>
+                            <input type="text" class="form-control" id="Author" name="Author" placeholder="Enter Author">
+                            <div class="errorTxt text-danger"></div>
+
+                        </div>
+                        <div class="form-group">
+                            <label for="Description">Description</label>
+                            <input type="text" class="form-control" id="Description" name="Description" placeholder="Enter Description">
+                            <div class="errorTxt text-danger"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="Category">Category</label>
+                            <select id="Category" name="Category" class="select2 form-control mb-3 custom-select" style="width: 100%; height:36px;">
+                                <option value="" selected disabled>Select</option>
+                                @foreach (var item in Categories)
+                                {
+                                    <option value="@item.Id">@item.Name</option>
+                                }
+                            </select>
+                            <div class="errorTxt text-danger"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="Section">Section</label>
+                            <select id="Section" name="Section" class="select2 form-control mb-3 custom-select" style="width: 100%; height:36px;">
+                                <option value="" selected disabled>Select</option>
+                                @foreach (var item in Sections)
+                                {
+                                    <option value="@item.Id">@item.Name</option>
+                                }
+                            </select>
+                            <div class="errorTxt text-danger"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="Shelf">Shelf</label>
+                            <select id="Shelf" name="Shelf" class="select2 form-control mb-3 custom-select" style="width: 100%; height:36px;">
+                                <option value="" selected disabled>Select</option>
+                                @foreach (var item in Shelves)
+                                {
+                                    <option value="@item.Id">@item.ShelfNumber</option>
+                                }
+                            </select>
+                            <div class="errorTxt text-danger"></div>
+                        </div>
+
+
+                        <div class="mb-3">
+                            <label style="color: #212529;font-weight: 100;" for="File">Book Image</label>
+                            <input type="text" id="Image" name="Image" hidden /> @* Bu Sadece görselin değişip değişmediğini anlamak için koyuldu -- Update / Add ?? *@
+                            <div id="my-dropzone" class="dropzone"></div>
+                            <div id="my-previews"></div>
+                            <div id="preview-template" style="display: none;">
+                                <div id="sortable-container" class="sortable-container">
+                                    <div class="col-12 dz-image-preview sortable-item">
+                                        <div class="detalis-container">
+                                            <div class="dz-details">
+                                                <div class="img-container" style="width: 120px;">
+                                                    <img class="dz-imgg" data-dz-thumbnail />
+                                                </div>
+
+
+                                                <div class="dz-remove" data-dz-remove><i class="fa-solid fa-trash"></i>Delete</div>
+
+                                            </div>
+                                            <div class="dz-progress"><span class="dz-upload" data-dz-uploadprogress></span></div>
+                                            <div class="dz-error-message"><span data-dz-errormessage></span></div>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+
+
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btnClose" data-bs-dismiss="modal">Close</button>
+                    <button id="submitBtn" type="button" class="btn btn-primary">Save</button>
+                    @* <button type="button" class="btn btn-primary" id="img-btn">img</button> *@
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+    @{
+        var commands = new List<object>();
+        commands.Add(new { type = "Edit", buttonOption = new { iconCss = " e-icons e-edit", cssClass = "btn-sm btn-success" } });
+        commands.Add(new { type = "Delete", buttonOption = new { iconCss = "e-icons e-delete", cssClass = "btn-sm btn-danger" } });
+    }
+
+<div class="control-section">
+    <ejs-grid id="Grid" commandClick="(e)=>commandClick(e)"
+              dataSource="@Books"
+              allowResizing="true"
+              allowSorting="true"
+              allowFiltering="true"
+              allowExcelExport="true"
+              allowMultiSorting="true"
+              allowKeyboard="true"
+              allowPdfExport="true"
+              gridLines="Both"
+              toolbarClick="toolbarClick"
+              toolbar="@(new List<string>() { "Print", "Search", "ExcelExport"})"
+              allowPaging="true"
+              primaryKey="Id">
+        <e-grid-pagesettings pageCount="5"></e-grid-pagesettings>
+        <e-grid-filterSettings type="Excel"></e-grid-filterSettings>
+       
+        <e-grid-columns>
+            <e-grid-column field="Id" isPrimaryKey="true" headerText="Book ID" textAlign="Left" validationRules="@(new { required=true })" width="80"></e-grid-column>
+            <e-grid-column field="Title" headerText="Book Title" validationRules="@(new { required=true })" width="100"></e-grid-column>
+            <e-grid-column field="Author" headerText=" Author"  editType="datepickeredit" width="100"></e-grid-column>
+            <e-grid-column field="Description" headerText="Description"  width="120"></e-grid-column>
+            <e-grid-column field="CategoryName" headerText="Category" width="100"></e-grid-column>
+            <e-grid-column field="ShelfNumber" headerText="Shelf" width="80"></e-grid-column>
+            <e-grid-column field="SectionName" headerText="Section" width="80"></e-grid-column>
+            <e-grid-column field="CreatedAt" headerText="Create Date" format="dd/MM/yyyy -- hh:mm a" width="120"></e-grid-column>
+            <e-grid-column field="UpdatedAt" headerText="Update Date" format="dd/MM/yyyy -- hh:mm a" width="120"></e-grid-column>
+            <e-grid-column headerText="Action" textAlign="Center"  commands="commands" width="100"></e-grid-column>
+        </e-grid-columns>
+    </ejs-grid>
+</div>
+
+<script>
+    // Get Image
+    function addImageToDropzone(imageUrl) {
+        var mockFile = { name: "Gelen Görsel", size: 12345 }; // Mock bir dosya nesnesi oluştur
+        myDropzone.emit("addedfile", mockFile); // Mock dosya Dropzone'a eklendi olarak tetikle
+        myDropzone.emit("thumbnail", mockFile, imageUrl); // Gelen URL ile thumbnail oluştur
+        myDropzone.emit("c  omplete", mockFile); // Dosya yükleme tamamlandı olarak tetikle
+    }
+    //================================================================================================
+    // Edit and Delete
+    function commandClick(args) {
+        if (args.commandColumn.type === 'Edit') {
+
+            var id = args.rowData.Id;
+            $.ajax({
+                type: "Get",
+                url: "/Book/GetBook",
+                data: { id: id },
+                success: function (response) {
+                    console.log(response);
+                    $("#Id").val(response.id);
+                    $("#Title").val(response.title);
+                    $("#Author").val(response.author);
+                    $("#Description").val(response.description);
+                    $("#Image").val(response.image);
+                    $("#CreatedAt").val(response.createdAt);
+                    $("#UpdatedAt").val(response.updatedAt);
+                    $("#Category").val(response.categoryId).trigger('change');
+                    $("#Section").val(response.sectionId).trigger('change');
+                    $("#Shelf").val(response.shelfId).trigger('change');
+                    addImageToDropzone("/Images/Book/"+ response.image);
+                    $("#staticBackdrop").modal('show');
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+
+        }
+        else if (args.commandColumn.type === 'Delete') {
+            var id = args.rowData.Id;
+            $.ajax({
+                type: "POST",
+                url: "/Book/DeleteBook",
+                data: { id: id },
+                success: function (response) {
+                    if (response === "Success") {
+                        window.location.reload();
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        }
+    }
+    //================================================================================================
+    // Get Category
+    function toolbarClick(args) {
+        var gridObj = document.getElementById("Grid").ej2_instances[0];
+        if (args.item.id === "Grid_excelexport") {
+            console.log(args.item.id);
+            gridObj.excelExport();
+        }
+    }
+    //================================================================================================
+    // Image Drop
+    Dropzone.autoDiscover = false;
+    const myDropzone = new Dropzone("#my-dropzone", {
+        url: "/Admin/Product/AddProduc",
+        autoProcessQueue: false,
+        autoQueue: false,
+        dictDefaultMessage: "Drop your book image here to upload(1 file)",
+        maxFilesize: 5, // MB
+        uploadMultiple: false,
+        parallelUploads: 100,
+        maxFiles: 1,
+        acceptedFiles: ".jpeg,.jpg,.png,.gif,.webp",
+        clickable: true,
+        previewsContainer: "#my-previews",
+        previewTemplate: document.querySelector('#preview-template').innerHTML,
+        init: function () {
+            this.on("addedfile", function (file) {
+                console.log("File added:", file);
+
+            });
+        }
+    });
+    //================================================================================================
+    // From
+    var formdata = new FormData();
+    $(document).ready(function () {
+        // Close Button -- On close Reset Form
+        $(".btnClose").click(function () {
+            $("#BookForm").trigger("reset");
+            $("#my-dropzone").empty();
+            $("#my-previews").empty();
+            $('#Category').val(null).trigger('change');
+        });
+
+        // Validate Form With Jquery
+        $("#BookForm").validate({
+            rules: {
+                Title: {
+                    required: true
+                },
+                Author: {
+                    required: true
+                },
+                Description: {
+                    required: true
+                },
+                Category: {
+                    required: true
+                }
+            },
+            messages: {
+                Title: {
+                    required: "Title is required."
+                },
+                Author: {
+                    required: "Author is required."
+                },
+                Description: {
+                    required: "Description is required."
+                },
+                Category: {
+                    required: "Category is required."
+                }
+            },
+            errorElement: 'div',
+            errorPlacement: function (error, element) {
+                if (element.hasClass('select2-hidden-accessible')) {
+                    error.insertAfter(element.next('.select2'));
+                } else {
+                    error.insertAfter(element.next('.errorTxt'));
+                }
+            },
+            submitHandler: function (form) {
+                submitForm();
+            }
+        });
+
+        $("#submitBtn").click(function (event) {
+            event.preventDefault();
+
+
+            function submitForm() {
+                var formdata = new FormData();
+                var ID = $("#Id").val();
+                var file = myDropzone.files[0];
+                var Title = $("#Title").val();
+                var Author = $("#Author").val();
+                var Image = $("#Image").val();
+                var CreatedAt = $("#CreatedAt").val();
+                var UpdatedAt = $("#UpdatedAt").val();
+                var Description = $("#Description").val();
+                var Category = $("#Category option:selected").val();
+                var Section = $("#Section option:selected").val();
+                var Shelf = $("#Shelf option:selected").val();
+                console.log(Category);
+                formdata.append("Id", ID);
+                formdata.append("Title", Title);
+                formdata.append("Author", Author);
+                formdata.append("Image", Image);
+                formdata.append("CreatedAt", CreatedAt);
+                formdata.append("UpdatedAt", UpdatedAt);
+                formdata.append("Description", Description);
+                formdata.append("CategoryId", Category);
+                formdata.append("SectionId", Section);
+                formdata.append("ShelfId", Shelf);
+                formdata.append("file", file);
+
+                $.ajax({
+                    type: "POST",
+                    url: "/Book/ManageBook",
+                    data: formdata,
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+                        if (response) {
+                            $("#staticBackdrop").modal('hide');
+                            $('#BookForm').trigger("reset");
+                            window.location.reload();
+                        }
+                    },
+                    error: function (error) {
+                        console.log("error");
+                    }
+                });
+            }
+            if ($("#BookForm").valid()) {
+                submitForm();
+            }
+        });
+    });
+
+    // sadece tasarım için yapıldı - tablo içinde edit ve delete butunları
+    $(document).ready(function (){
+        var btn = $('.e-btn');
+        btn.removeClass('e-btn');
+    })
+</script>

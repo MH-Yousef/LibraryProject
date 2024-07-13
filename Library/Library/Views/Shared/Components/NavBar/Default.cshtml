@@ -1,0 +1,124 @@
+﻿@{
+    var notifications = ViewBag.Notifications;
+}
+<!-- Top Bar Start -->
+<div class="topbar">
+    <!-- Navbar -->
+    <nav class="navbar-custom">
+
+        <div class="topbar-left">
+            <a href="~/" class="logo">
+                <span>
+                    <img src="~/assets/images/favicon.png" alt="logo-small" class="logo-sm">
+                </span>
+                <span class="logo-name">
+                    Library Project
+                </span>
+            </a>
+        </div>
+
+        <ul class="list-unstyled topbar-nav float-right mb-0">
+
+            <li class="dropdown">
+                <a class="nav-link dropdown-toggle arrow-none waves-light waves-effect" data-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
+                    <i class="mdi mdi-bell-outline nav-icon"></i>
+                    <span class="badge badge-danger badge-pill noti-icon-badge">2</span>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right dropdown-lg" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-232px, 70px, 0px);">
+                    <!-- item-->
+                    <h6 class="dropdown-item-text">
+                        Notifications (258)
+                    </h6>
+                    <div class="slimScrollDiv" style="position: relative; overflow: hidden; width: auto; height: 374.141px;">
+                        <div id="notification-list" class="slimscroll notification-list" style="overflow: hidden; width: auto; height: 374.141px;">
+                            <!-- item-->
+                            @foreach (var item in notifications)
+                            {
+                                <div href="#" class="media new-message" style="align-items: center;">
+                                    <div class="media-left" style="margin: 10px;">
+                                        @if(item.Image != null)
+                                        {
+                                            <img src="~/Images/Profile/@item.Image" alt="user" class="rounded-circle thumb-lg">
+                                        }
+                                        else
+                                        {
+                                            <img src="~/user.png" alt="user" class="rounded-circle thumb-lg">
+                                        }
+                                        <span class="round-10 bg-success"></span>
+                                    </div>
+                                    <div class="media-body mdbody">
+                                        <div class="d-inline-block">
+                                            <h6>@item.FullName</h6>
+                                        </div>
+                                        <div class="btn-group" role="group" aria-label="Friend request actions" style="margin-right: 10px;">
+                                            <button class="btn btn-danger waves-effect waves-light reject-friend-btn" data-user-id="@item.Id" data-sender="@item.FullName" style="padding: 5px; font-size: 11px; line-height: 19px;margin-right: 8px;">Reject</button>
+                                            <button class="btn btn-success waves-effect waves-light accept-friend-btn" data-user-id="@item.Id" data-sender="@item.FullName" style="padding: 5px; font-size: 11px; line-height: 19px;">Accept</button>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            <!-- item-->
+
+                        </div><div class="slimScrollBar" style="background: rgb(158, 165, 171); width: 7px; position: absolute; top: 0px; opacity: 0.4; display: block; border-radius: 7px; z-index: 99; right: 1px;"></div><div class="slimScrollRail" style="width: 7px; height: 100%; position: absolute; top: 0px; display: none; border-radius: 7px; background: rgb(51, 51, 51); opacity: 0.2; z-index: 90; right: 1px;"></div>
+                    </div>
+                    <!-- All-->
+                    <a href="javascript:void(0);" class="dropdown-item text-center text-primary">
+                        View all <i class="fi-arrow-right"></i>
+                    </a>
+                </div>
+            </li>
+
+            <li class="dropdown">
+                <a class="nav-link dropdown-toggle waves-effect waves-light nav-user" data-toggle="dropdown" href="#" role="button"
+                   aria-haspopup="false" aria-expanded="false">
+                    @* <img src="~/assets/images/users/user-1.jpg" alt="profile-user" class="rounded-circle" /> *@
+                    <span class="ml-1 nav-user-name hidden-sm"><i class="mdi mdi-menu nav-icon"></i> </span>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item" href="/Account/Profile"><i class="dripicons-user text-muted mr-2"></i> Profile</a>
+                    <a class="dropdown-item" href="#"><i class="dripicons-wallet text-muted mr-2"></i> My Wallet</a>
+                    <a class="dropdown-item" href="#"><i class="dripicons-gear text-muted mr-2"></i> Settings</a>
+                    <a class="dropdown-item" href="#"><i class="dripicons-lock text-muted mr-2"></i> Lock screen</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="/Account/Logout"><i class="dripicons-exit text-muted mr-2"></i> Logout</a>
+                </div>
+            </li>
+        </ul>
+
+
+
+    </nav>
+    <!-- end navbar-->
+</div>
+<!-- Top Bar End -->
+<div class="page-wrapper-img">
+    <div class="page-wrapper-img-inner">
+        <div class="sidebar-user media">
+            @if (ViewBag.UserImage != null)
+            {
+                <img src="~/images/Profile/@ViewBag.UserImage" alt="user" class="rounded-circle img-thumbnail mb-1">
+            }
+            else
+            {
+                <img src="~/user.png" alt="user" class="rounded-circle img-thumbnail mb-1">
+            }
+            <span class="online-icon"><i class="mdi mdi-record text-success"></i></span>
+            <div class="media-body">
+                <h5 style="    text-align: left;" class="text-light">@ViewBag.Name</h5>
+                <ul class="list-unstyled list-inline mb-0 mt-2">
+                    <li class="list-inline-item">
+                        <a href="/Account/Profile" class=""><i class="mdi mdi-account text-light"></i></a>
+                    </li>
+
+                    <li class="list-inline-item">
+                        <a href="/Account/Logout" class=""><i class="mdi mdi-power text-danger"></i></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <!-- Page-Title -->
+
+        <!-- end page title end breadcrumb -->
+    </div><!--end page-wrapper-img-inner-->
+</div><!--end page-wrapper-img-->

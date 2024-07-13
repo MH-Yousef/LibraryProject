@@ -1,0 +1,173 @@
+﻿@using Data.DTOs.Book
+@using Data.DTOs.UserDTO
+@{
+    ViewData["Title"] = "Home Page";
+
+    // list of users
+
+    var Users = ViewBag.Users;
+    var currentUser = ViewBag.CurrentUser;
+    var requests = ViewBag.requests;
+    var sentRequests = ViewBag.sentRequests;
+    var Friends = ViewBag.Friends;
+
+}
+@model List<BookDTO>
+
+<div class="chat-box-left">
+    <ul class="nav nav-pills mb-3 nav-justified" id="pills-tab" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" id="general_chat_tab" data-toggle="pill" href="#general_chat" aria-selected="true">All Users</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="group_chat_tab" data-toggle="pill" href="#group_chat" aria-selected="false">Requests</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="Sent_chat_tab" data-toggle="pill" href="#Sent_chat" aria-selected="false">Sent Requests</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="personal_chat_tab" data-toggle="pill" href="#personal_chat" aria-selected="false">Friends</a>
+        </li>
+    </ul>
+    <div class="chat-search">
+        <div class="form-group">
+            <div class="input-group">
+                <input type="text" id="chat-search" name="chat-search" class="form-control" placeholder="Search">
+                <span class="input-group-append">
+                    <button id="opad" type="button" class="btn btn-primary shadow-none"><i class="fas fa-search"></i></button>
+                </span>
+            </div>
+        </div>
+    </div><!--end chat-search-->
+
+    <div class="tab-content chat-list slimscroll" id="pills-tabContent">
+        <div class="tab-pane fade show active" id="general_chat">
+            @foreach (var item in Users)
+            {
+                <a href="#" class="media new-message">
+                    <div class="media-left">
+                        @if (item.Image != null)
+                        {
+                            <img src="~/Images/Profile/@item.Image" alt="user" class="rounded-circle thumb-lg">
+                        }
+                        else
+                        {
+                            <img src="~/user.png" alt="user" class="rounded-circle thumb-lg">
+                        }
+                        <span class="round-10 bg-success"></span>
+                    </div>
+                    <div class="media-body">
+                        <div class="d-inline-block">
+                            <h6>@item.FullName</h6>
+                        </div>
+                        <button class="btn btn-primary waves-effect waves-light add-friend-btn" data-image="@currentUser.Image" data-sender="@currentUser.Id" data-user-name="@item.FullName" data-receiver="@item.Id" style="padding: 5px; font-size: 11px; line-height: 19px;">Add Friend</button>
+                    </div>
+                </a>
+            }
+        </div><!--end general chat-->
+
+        <div class="tab-pane fade" id="group_chat">
+            @foreach (var item in requests)
+            {
+                <div href="#" class="media new-message" style="align-items: center;">
+                    <div class="media-left" style="margin: 10px;">
+                        @if (item.Image != null)
+                        {
+                            <img src="~/Images/Profile/@item.Image" alt="user" class="rounded-circle thumb-lg">
+                        }
+                        else
+                        {
+                            <img src="~/user.png" alt="user" class="rounded-circle thumb-lg">
+                        }
+                        <span class="round-10 bg-success"></span>
+                    </div>
+                    <div class="media-body mdbody">
+                        <div class="d-inline-block">
+                            <h6>@item.FullName</h6>
+                        </div>
+                        <div class="btn-group" role="group" aria-label="Friend request actions" style="margin-right: 10px;">
+                            <button class="btn btn-danger waves-effect waves-light reject-friend-btn" data-user-id="@item.Id" data-sender="@item.FullName" style="padding: 5px; font-size: 11px; line-height: 19px;margin-right: 8px;">Reject</button>
+                            <button class="btn btn-success waves-effect waves-light accept-friend-btn" data-user-id="@item.Id" data-sender="@item.FullName" style="padding: 5px; font-size: 11px; line-height: 19px;">Accept</button>
+
+                        </div>
+                    </div>
+                </div>
+            }
+        </div><!--end group chat-->
+
+        <div class="tab-pane fade" id="Sent_chat">
+            
+            @foreach (var item in sentRequests)
+            {
+                <a href="#" class="media new-message">
+                    <div class="media-left">
+                        @if (item.Image != null)
+                        {
+                            <img src="~/Images/Profile/@item.Image" alt="user" class="rounded-circle thumb-lg">
+                        }
+                        else
+                        {
+                            <img src="~/user.png" alt="user" class="rounded-circle thumb-lg">
+                        }
+                        <span class="round-10 bg-success"></span>
+                    </div>
+                    <div class="media-body">
+                        <div class="d-inline-block">
+                            <h6>@item.FullName</h6>
+                        </div>
+                        <button class="btn btn-danger waves-effect waves-light cancel-friend-btn" data-sender="@currentUser.Id" data-user-name="@item.FullName" data-receiver="@item.Id" style="padding: 5px; font-size: 11px; line-height: 19px;">Cancel</button>
+                    </div>
+                </a>
+            }
+        </div>
+        <div class="tab-pane fade" id="personal_chat">
+            @foreach (var item in Friends)
+            {
+                <a href="#" class="media new-message">
+                    <div class="media-left">
+                        @if (item.Image != null)
+                        {
+                            <img src="~/Images/Profile/@item.Image" alt="user" class="rounded-circle thumb-lg">
+                        }
+                        else
+                        {
+                            <img src="~/user.png" alt="user" class="rounded-circle thumb-lg">
+                        }
+                        <span class="round-10 bg-success"></span>
+                    </div>
+                    <div class="media-body">
+                        <div class="d-inline-block">
+                            <h6>@item.FullName</h6>
+                        </div>
+                        <button class="btn btn-danger waves-effect waves-light cancel-friend-btn"  data-user-name="@item.FullName" data-receiver="@item.Id" style="padding: 5px; font-size: 11px; line-height: 19px;">Cancel Friend</button>
+                    </div>
+                </a>
+            }
+        </div>
+    </div><!--end tab-content-->
+</div><!--end chat-box-left -->
+
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col-lg-4">
+            <div class="card e-co-product">
+                <div class="ribbon-box mb-0">
+                    <a href="/Book/BookDetails/@item.Id">
+                        <img src="~/Images/Book/@item.Image" alt="" class="img-fluid mx-auto d-block">
+                    </a>
+                    <div class="card-body text-center product-info">
+                        <a href="" class="product-title">@item.Title</a>
+                        <ul class="list-inline mb-2 product-review">
+
+                        </ul>
+                    </div><!--end card-body-->
+                </div> <!--end ribbon-box-->
+            </div><!--end card-->
+        </div>
+
+        <!--end col-->
+    }
+
+
+</div>

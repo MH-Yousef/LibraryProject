@@ -1,0 +1,38 @@
+﻿@using Data.DTOs.Category
+@model CategoryDTO
+@{
+    ViewData["Title"] = "GetCategory";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="modal fade" id="GetCategory" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Category</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+
+                </button>
+            </div>
+            <div class="modal-body">
+                <form enctype="multipart/form-data">
+                    <input id="EntityID" type="text" asp-for="Id" name="name" hidden />
+                    <div class="form-group"
+                    <label for="Name"> Name</label>
+                    <input type="text" class="form-control" asp-for="Name" id="Name" placeholder="Enter Category Name">
+                    </div>
+                    <div class="form-group"
+                    <label for="Description">Description</label>
+                    <input type="text" class="form-control" asp-for="Description" id="Description" placeholder="Enter Description">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button id="submitBtn" type="button" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+

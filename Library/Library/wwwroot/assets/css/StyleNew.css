@@ -1,0 +1,131 @@
+﻿.logo-name {
+    padding: 5px;
+    color: #363e47;
+    font-size: 17px;
+    font-weight: bold;
+}
+#picInput{
+    display: none;
+
+}
+#output {
+    max-width: inherit;
+    min-height: 128px;
+    object-fit: contain;
+}
+.fa-edit {
+    color: #5d5b6f;
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    font-size: 17px;
+    cursor: pointer;
+}
+.saveForm {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+#camera{
+        display: none;
+
+}
+.dz-imgg {
+    box-shadow: 0px 0px 8px 10px rgb(169 181 201);
+    border-radius: 7px;
+    width: 120px;
+}
+
+#my-previews {
+    padding: 15px 9px;
+}
+.dz-details {
+    width: fit-content;
+
+}
+.dz-remove {
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    padding: 10px;
+    align-items: center;
+    color: #dc3545;
+}
+.metismenu li {
+    height: 44px;
+}
+    .metismenu li a {
+        display: flex;
+        align-items: center;
+        height: inherit;
+    }
+    .metismenu li:hover {
+        background-color: #2c2c4d38;
+    }
+
+#Toast {
+    display: none;
+    position: absolute;
+    z-index: 1000;
+    right: 20px;
+    top: 25px;
+    min-width: 250px;
+}
+#toast-container {
+    position: fixed;
+    z-index: 1000;
+    right: 20px;
+    top: 25px;
+    min-width: 250px;
+}
+.custom-toast {
+    display: none;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+}
+
+    .custom-toast.show {
+        display: block;
+        opacity: 1;
+    }
+.mdbody {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.media {
+    align-items: center !important;
+}
+.chat-box-left .chat-list .media .media-body > div:last-child {
+    flex-direction : unset;
+}
+
+.toast-title {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.toast-message {
+    border-top: 1px solid #ccc; /* Başlık ile mesaj arasına çizgi ekler */
+    padding-top: 5px;
+}
+
+.toast-custom-icon {
+    background-image: url('your-icon-url.png'); /* Özelleştirilmiş ikon URL'si */
+    background-size: contain;
+}
+#toast-container > div {
+    padding: 10px !important;
+    color: #212529 !important;
+}
+.toast-header{
+    padding: 0 !important;
+    color: #212529 !important;
+}
+.toast-success {
+    background-color: rgb(255 255 255) !important;
+}
+
+.sidebar-user {
+    align-items: unset !important;
+}

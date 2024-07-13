@@ -1,0 +1,209 @@
+﻿@using Data.DTOs.Shlef
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var data = ViewBag.dataSource;
+    var Categories = ViewBag.Categories;
+    var Sections = ViewBag.Sections;
+}
+@model ShelfDTO
+<button class="btn btn-primary" id="create" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Add Shelf</button>
+<br>
+<br>
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Shelf</h5>
+                <button type="button" class="close btnClose" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="ShelfForm" enctype="multipart/form-data">
+                    <input id="EntityId" type="text" name="Id" hidden />
+                    <input id="CreatedAt" type="text" name="CreatedAt" hidden />
+                    <input id="UpdatedAt" type="text" name="UpdatedAt" hidden />
+                    <div class="form-group">
+                        <label for="ShelfNumber"> Shelf Number</label>
+                        <input type="text" class="form-control" id="ShelfNumber" name="ShelfNumber" placeholder="Enter Shelf Number">
+                        <div class="errorTxt text-danger"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="Category">Category</label>
+                        <select id="Category" name="Category" class="select2 form-control mb-3 custom-select" style="width: 100%; height:36px;">
+                        <option value="" selected disabled>Select</option>
+                            @foreach (var item in Categories)
+                            {
+                               <option value="@item.Id">@item.Name</option>
+                            }
+                        </select>
+                        <div class="errorTxt text-danger"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="Section">Section</label>
+                        <select id="Section" name="Section" class="select2 form-control mb-3 custom-select" style="width: 100%; height:36px;">
+                        <option value="" selected disabled>Select</option>
+                            @foreach (var item in Sections)
+                            {
+                                   <option value="@item.Id">@item.Name</option>
+                            }
+                        </select>
+                        <div class="errorTxt text-danger"></div>
+                    </div>
+                    <br />
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btnClose" data-bs-dismiss="modal">Close</button>
+                <button id="submitBtn" type="button" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+@{
+    var commands = new List<object>();
+    commands.Add(new { type = "Edit", buttonOption = new { iconCss = " e-icons e-edit", cssClass = "btn-sm btn-success" } });
+    commands.Add(new { type = "Delete", buttonOption = new { iconCss = "e-icons e-delete", cssClass = "btn-sm btn-danger" } });
+}
+<div class="control-section">
+    <ejs-grid commandClick="(e)=>commandClick(e)" id="Grid" dataSource="@data"
+              allowResizing="true"
+              allowSorting="true"
+              allowFiltering="true"
+              allowExcelExport="true"
+              allowMultiSorting="true"
+              allowKeyboard="true"
+              allowPdfExport="true"
+              gridLines="Both"
+              toolbarClick="toolbarClick"
+              toolbar="@(new List<string>() { "Print", "Search", "ExcelExport"})"
+              allowPaging="true"
+              primaryKey="Id">
+        <e-grid-pagesettings pageCount="5"></e-grid-pagesettings>
+        <e-grid-filterSettings type="Excel"></e-grid-filterSettings>
+        <e-grid-editSettings allowAdding="true"></e-grid-editSettings>
+        <e-grid-columns>
+            <e-grid-column field="Id" isPrimaryKey="true" headerText="ID" textAlign="Left" validationRules="@(new { required=true })" width="60"></e-grid-column>
+            <e-grid-column field="ShelfNumber" headerText="Shelf Number"  width="120"></e-grid-column>
+            <e-grid-column field="SectionName" headerText="Section" width="120"></e-grid-column>
+            <e-grid-column field="CategoryName" headerText="Category" width="120"></e-grid-column>
+            <e-grid-column field="CreatedAt" headerText="Create Date" format="dd/MM/yyyy -- hh:mm a" width="150"></e-grid-column>
+            <e-grid-column field="UpdatedAt" headerText="Update Date" format="dd/MM/yyyy -- hh:mm a" width="120"></e-grid-column>
+            <e-grid-column headerText="Action" width="150" textAlign="Center" commands="commands"></e-grid-column>
+        </e-grid-columns>
+    </ejs-grid>
+</div>
+
+<script>
+
+    //====================================================
+    // Close Button
+    $(".btnClose").click(function () {
+        $('#ShelfForm').trigger("reset");
+        console.log("Close");
+    });
+    //====================================================
+    // Get Category
+    function toolbarClick(args) {
+        var gridObj = document.getElementById("Grid").ej2_instances[0];
+        if (args.item.id === 'Grid_excelexport') {
+            console.log(args.item.id);
+            gridObj.excelExport();
+        }
+
+    }
+    var formdata = new FormData();
+
+    $("#submitBtn").click(function (event) {
+        event.preventDefault();
+
+        var ID = $("#EntityId").val();
+        console.log(ID);
+        var ShelfNumber = $("#ShelfNumber").val();
+        var CategoryId = $("#Category option:selected").val();
+        var SectionId = $("#Section option:selected").val();
+        var createdAt = $("#CreatedAt").val();
+        var updatedAt = $("#UpdatedAt").val();
+
+        formdata.append("Id", ID);
+        formdata.append("ShelfNumber", ShelfNumber);
+        formdata.append("CategoryId", CategoryId);
+        formdata.append("SectionId", SectionId);
+        formdata.append("CreatedAt", createdAt);
+        formdata.append("UpdatedAt", updatedAt);
+
+
+        $.ajax({
+            type: "POST",
+            url: "/Shelf/ManageShelf",
+            data: formdata,
+            contentType: false,
+            processData: false,
+            success: function (response) {
+                if (response) {
+                    console.log(response);
+                    $("#staticBackdrop").modal('hide');
+                    $('#ShelfForm').trigger("reset");
+                    window.location.reload();
+                    
+
+                }
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+
+    });
+    //====================================================
+    // Edit and Delete
+    function commandClick(args) {
+        if (args.commandColumn.type === 'Edit') {
+
+            var id = args.rowData.Id;
+            $.ajax({
+                type: "Get",
+                url: "/Shelf/GetShelf",
+                data: { id: id },
+                success: function (response) {
+                    console.log(response);
+                    $("#EntityId").val(response.id);
+                    $("#ShelfNumber").val(response.shelfNumber);
+                    $("#CreatedAt").val(response.createdAt);
+                    $("#UpdatedAt").val(response.updatedAt);
+                    $("#Category").val(response.categoryId).trigger('change');
+                    $("#Section").val(response.sectionId).trigger('change');
+
+                    $("#staticBackdrop").modal('show');
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+
+        }
+        else if (args.commandColumn.type === 'Delete') {
+            var id = args.rowData.Id;
+            $.ajax({
+                type: "POST",
+                url: "/Shelf/DeleteShelf",
+                data: { id: id },
+                success: function (response) {
+                    if (response) {
+                        window.location.reload();
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        }
+    }
+    // sadece tasarım için yapıldı - tablo içinde edit ve delete botunları
+    $(document).ready(function () {
+        var btn = $('.e-btn');
+        btn.removeClass('e-btn');
+    })
+</script>

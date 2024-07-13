@@ -1,0 +1,238 @@
+﻿@using Data.DTOs.Category
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var data = ViewBag.dataSource;
+    var Sections = ViewBag.Sections;
+}
+@model CategoryDTO
+<button class="btn btn-primary" id="create" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Add Category</button>
+@* <button class="btn btn-primary" id="getds">get Category</button> *@
+<br>
+<br>
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Category</h5>
+                <button type="button" class="close btnClose" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="CategoryForm" enctype="multipart/form-data">
+                    <input id="EntityID" type="text"  name="name" hidden />
+                    <input id="CreatedAt" type="text" name="name" hidden />
+                    <input id="UpdatedAt" type="text" name="name" hidden />
+                    <div class="form-group">
+                        <label for="Name"> Name</label>
+                        <input type="text" class="form-control" name="Name" id="Name" placeholder="Enter Category Name">
+                        <div class="errorTxt text-danger"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="Description">Description</label>
+                        <input type="text" class="form-control" name="Description" id="Description" placeholder="Enter Description">
+                        <div class="errorTxt text-danger"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="Section">Section</label>
+                        <select id="Section" name="Section" class="select2 form-control mb-3 custom-select" style="width: 100%; height:36px;">
+                            <option value="" selected disabled>Select</option>
+                            @foreach (var item in Sections)
+                            {
+                                <option value="@item.Id">@item.Name</option>
+                            }
+                        </select>
+                        <div class="errorTxt text-danger"></div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btnClose" data-bs-dismiss="modal">Close</button>
+                <button id="submitBtn" type="button" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+@{
+    var commands = new List<object>();
+    commands.Add(new { type = "Edit", buttonOption = new { iconCss = " e-icons e-edit", cssClass = "btn-sm btn-success" } });
+    commands.Add(new { type = "Delete", buttonOption = new { iconCss = "e-icons e-delete", cssClass = "btn-sm btn-danger" } });
+}
+<div class="control-section">
+    <ejs-grid commandClick="(e)=>commandClick(e)" id="Grid" dataSource="@data"
+              allowResizing="true"
+              allowSorting="true"
+              allowFiltering="true"
+              allowExcelExport="true"
+              allowMultiSorting="true"
+              allowKeyboard="true"
+              allowPdfExport="true"
+              gridLines="Both"
+              toolbarClick="toolbarClick"
+              toolbar="@(new List<string>() { "Print", "Search", "ExcelExport"})"
+              allowPaging="true"
+              primaryKey="Id">
+        <e-grid-pagesettings pageCount="5"></e-grid-pagesettings>
+        <e-grid-filterSettings type="Excel"></e-grid-filterSettings>
+        <e-grid-editSettings allowAdding="true"></e-grid-editSettings>
+        <e-grid-columns>
+            <e-grid-column field="Id" isPrimaryKey="true" headerText="ID" textAlign="Left" validationRules="@(new { required=true })" width="60"></e-grid-column>
+            <e-grid-column field="Name" headerText="Name" validationRules="@(new { required=true })" width="120"></e-grid-column>
+            <e-grid-column field="Description" headerText="Description" width="150"></e-grid-column>
+            <e-grid-column field="Section" headerText="Section" width="100"></e-grid-column>
+            <e-grid-column field="CreatedAt" headerText="Create Date" format="dd/MM/yyyy -- hh:mm a" width="150"></e-grid-column>
+            <e-grid-column field="UpdatedAt" headerText="Update Date" format="dd/MM/yyyy -- hh:mm a" width="120"></e-grid-column>
+            <e-grid-column headerText="Action" width="150" textAlign="Center" commands="commands"></e-grid-column>
+        </e-grid-columns>
+    </ejs-grid>
+</div>
+
+<script>
+    // Close Button
+    $(".btnClose").click(function () {
+        $('#CategoryForm').trigger("reset");
+        console.log("Close");
+    });
+    //====================================================
+    // Get Category
+    function toolbarClick(args) {
+        var gridObj = document.getElementById("Grid").ej2_instances[0];
+        if (args.item.id === 'Grid_excelexport') {
+            console.log(args.item.id);
+            gridObj.excelExport();
+        }
+
+    }
+
+    $(document).ready(function () {
+        $("#CategoryForm").validate({
+            rules: {
+                Name: {
+                    required: true,
+                    minlength: 4
+                },
+                Description: {
+                    required: true,
+                    minlength: 4
+                },
+                Section: {
+                    required: true,
+                }
+            },
+            messages: {
+                Name: {
+                    required: "Please enter Name",
+                    minlength: "Your name must consist of at least 4 characters"
+                },
+                Description: {
+                    required: "Please enter Description",
+                    minlength: "Your Description must consist of at least 4 characters"
+                },
+                Section: {
+                    required: "Please select Section"
+                }
+            },
+            errorElement: 'div',
+            errorPlacement: function (error, element) {
+                if (element.hasClass('select2-hidden-accessible')) {
+                    error.insertAfter(element.next('.select2'));
+                } else {
+                    error.insertAfter(element.next('.errorTxt'));
+                }
+            },
+            submitHandler: function (form) {
+                submitForm();
+            }
+        });
+    });
+    $("#submitBtn").click(function (event) {
+        event.preventDefault();
+
+        var formdata = new FormData();
+        function submitForm() {
+            var id = $("#EntityID").val();
+            var Name = $("#Name").val();
+            var Description = $("#Description").val();
+            var SectionId = $("#Section option:selected").val();
+            var CreatedAt = $("#CreatedAt").val();
+            var UpdatedAt = $("#UpdatedAt").val();
+
+            formdata.append("Name", Name);
+            formdata.append("Description", Description);
+            formdata.append("Id", id);
+            formdata.append("SectionId", SectionId);
+            formdata.append("CreatedAt", CreatedAt);
+            formdata.append("UpdatedAt", UpdatedAt);
+            console.log(id);
+
+            $.ajax({
+                type: "POST",
+                url: "/Category/ManageCategory",
+                data: formdata,
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    $("#staticBackdrop").modal('hide');
+                    $('#CategoryForm').trigger("reset");
+                    showToastSend("Success", response.data.message);
+
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        }
+        if ($("#CategoryForm").valid()) {
+            submitForm();
+        }
+
+    });
+    //====================================================
+    // Edit and Delete
+    function commandClick(args) {
+        if (args.commandColumn.type === 'Edit') {
+
+            var id = args.rowData.Id;
+            $.ajax({
+                type: "Get",
+                url: "/Category/GetCategory",
+                data: { id: id },
+                success: function (response) {
+                    $("#EntityID").val(response.id);
+                    $("#Name").val(response.name);
+                    $("#Description").val(response.description);
+                    $("#CreatedAt").val(response.createdAt);
+                    $("#UpdatedAt").val(response.updatedAt);
+                    $("#Section").val(response.sectionId).trigger('change');
+                    console.log(response);
+                    $("#staticBackdrop").modal('show');
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+
+        }
+        else if (args.commandColumn.type === 'Delete') {
+            var id = args.rowData.Id;
+            $.ajax({
+                type: "POST",
+                url: "/Category/DeleteCategory",
+                data: { id: id },
+                success: function (response) {
+                    window.location.reload();
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        }
+    }
+    // sadece tasarım için yapıldı - tablo içinde edit ve delete botunları
+    $(document).ready(function () {
+        var btn = $('.e-btn');
+        btn.removeClass('e-btn');
+    })
+</script>

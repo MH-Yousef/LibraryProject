@@ -1,0 +1,27 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    @await Html.PartialAsync("~/Views/Partials/_Head.cshtml")
+</head>
+
+<body>
+    @await Html.PartialAsync("~/Views/Partials/Toast.cshtml")
+    @await Component.InvokeAsync("NavBar")
+    <div class="page-wrapper">
+        <div class="page-wrapper-inner">
+            @await Html.PartialAsync("~/Views/Partials/_Sidebar.cshtml")
+            <div class="page-content">
+                <div class="container-fluid">
+                    @RenderBody()
+                </div>
+                @await Html.PartialAsync("~/Views/Partials/_Footer.cshtml")
+            </div>
+        </div>
+    </div>
+    @await Html.PartialAsync("~/Views/Partials/_Scripts.cshtml")
+</body>
+
+<script src="~/js/ej2.min.js"></script>
+<ejs-scripts></ejs-scripts>
+</html>
