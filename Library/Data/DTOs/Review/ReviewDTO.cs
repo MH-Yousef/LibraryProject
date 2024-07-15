@@ -12,6 +12,7 @@ namespace Data.DTOs.Review
         public string Content { get; set; }
         public int BookId { get; set; }
         public int UserId { get; set; }
+        public string userName { get; set; }
         public int type { get; set; }
     }
 }

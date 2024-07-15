@@ -15,31 +15,31 @@ namespace LibraryApi.Controllers
         {
             _reviewService = reviewService;
         }
-
-        public async Task<IActionResult> AddReview(ReviewDTO review)
+        [HttpPost]
+        public async Task<IActionResult> AddReview([FromBody] ReviewDTO review)
         {
             var result = await _reviewService.AddReview(review);
             return Ok(result);
         }
-
-        public async Task<IActionResult> UpdateReview(ReviewDTO review)
+        [HttpPut]
+        public async Task<IActionResult> UpdateReview([FromBody] ReviewDTO review)
         {
             var result = await _reviewService.UpdateReview(review);
             return Ok(result);
         }
-
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteReview(int id)
         {
             var result = await _reviewService.DeleteReview(id);
             return Ok(result);
         }
-
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetReview(int id)
         {
             var result = await _reviewService.GetReview(id);
             return Ok(result);
         }
-
+        [HttpGet("GetReviews/{id}")]
         public async Task<IActionResult> GetReviews(int id)
         {
             var result = await _reviewService.GetReviews(id);

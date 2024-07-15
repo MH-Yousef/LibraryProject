@@ -15,31 +15,31 @@ namespace LibraryApi.Controllers
         {
             _shelfService = shelfService;
         }
-
-        public async Task<IActionResult> AddShelf(ShelfDTO shelf)
+        [HttpPost]
+        public async Task<IActionResult> AddShelf([FromBody] ShelfDTO shelf)
         {
             var result = await _shelfService.AddShelf(shelf);
             return Ok(result);
         }
-
-        public async Task<IActionResult> UpdateShelf(ShelfDTO shelf)
+        [HttpPut]
+        public async Task<IActionResult> UpdateShelf([FromBody] ShelfDTO shelf)
         {
             var result = await _shelfService.UpdateShelf(shelf);
             return Ok(result);
         }
-
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteShelf(int id)
         {
             var result = await _shelfService.DeleteShelf(id);
             return Ok(result);
         }
-
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetShelf(int id)
         {
             var result = await _shelfService.GetShelf(id);
             return Ok(result);
         }
-
+        [HttpGet]
         public async Task<IActionResult> GetShelves()
         {
             var result = await _shelfService.GetShelves();

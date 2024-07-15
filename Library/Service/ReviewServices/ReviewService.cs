@@ -120,7 +120,8 @@ namespace Service.ReviewServices
                 CreatedAt = x.CreatedAt,
                 UpdatedAt = x.UpdatedAt,
                 type = (int)x.ShareType,
-                UserId = x.UserId
+                UserId = x.UserId,
+                userName = x.User.FullName
             }).ToListAsync();
             var type = ReviewShareType.Public;
             var publicReviews = await _context.Reviews.Where(x => x.IsDeleted == false && x.BookId == id && x.ShareType == ReviewShareType.Public).Select(x => new ReviewDTO

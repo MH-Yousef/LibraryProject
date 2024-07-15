@@ -15,31 +15,31 @@ namespace LibraryApi.Controllers
         {
             _sectionService = sectionService;
         }
-
-        public async Task<IActionResult> AddSection(SectionDTO section)
+        [HttpPost]
+        public async Task<IActionResult> AddSection([FromBody] SectionDTO section)
         {
             var result = await _sectionService.AddSection(section);
             return Ok(result);
         }
-
-        public async Task<IActionResult> UpdateSection(SectionDTO section)
+        [HttpPut]
+        public async Task<IActionResult> UpdateSection([FromBody] SectionDTO section)
         {
             var result = await _sectionService.UpdateSection(section);
             return Ok(result);
         }
-
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteSection(int id)
         {
             var result = await _sectionService.DeleteSection(id);
             return Ok(result);
         }
-
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetSection(int id)
         {
             var result = await _sectionService.GetSection(id);
             return Ok(result);
         }
-
+        [HttpGet]
         public async Task<IActionResult> GetSections()
         {
             var result = await _sectionService.GetSections();
